@@ -85,13 +85,15 @@ map.on('ready', function() {
     })
 
     // map.panTo([position.coords.latitude, position.coords.longitude])
-  }
+  }  
 
   function errorCoords() {
     console.log('Unable to get current position')
   }
 
-  watchPositionId = navigator.geolocation.watchPosition(successCoords, errorCoords);
+  var options = {enableHighAccuracy: true, frequency: 1 };
+
+  watchPositionId = navigator.geolocation.watchPosition(successCoords, errorCoords, options);
 
   markersRef.on('child_added', function(childSnapshot) {
     var uuid = childSnapshot.key()
