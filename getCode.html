@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Click the button to get your unique code.</p>
+
+<button onclick="showCode()">Get Code</button>
+
+<p id="demo"></p>
+
+<script>
+var x = document.getElementById("demo");
+
+function makeid()
+{
+    var text = "";
+    var allchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for(var i=0; i < 5; i++)
+        text += allchars.charAt(Math.floor(Math.random() * allchars.length));
+
+    return text;
+}
+
+function showCode() {
+    x.innerHTML = makeid();	
+}
+</script>
+
+</body>
+</html>
