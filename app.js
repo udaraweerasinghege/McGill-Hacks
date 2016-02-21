@@ -1,4 +1,6 @@
+
 // Config
+var name;
 L.mapbox.accessToken = config.mapbox.accessToken;
 
 // Utilities
@@ -72,11 +74,14 @@ function putPoint(uuid, position) {
 }
 
 var watchPositionId;
+
 map.on('ready', function() {
+  var name = prompt('Enter your name: ');
   function successCoords(position) {
     if (!position.coords) return
 
     markersRef.child(myUuid).set({
+      name: name,
       coords: {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
@@ -130,3 +135,5 @@ setInterval(function() {
     })
   })
 }, 5000);
+
+
