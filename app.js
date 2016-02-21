@@ -64,6 +64,7 @@ function removePoint(uuid) {
 }
 
 function updatePoint(uuid, position) {
+  console.log(position);
   var marker = markers[uuid]
   marker.setLatLng([position.coords.latitude, position.coords.longitude])
 }
@@ -112,7 +113,7 @@ map.on('ready', function() {
   markersRef.on('child_changed', function(childSnapshot) {
     var uuid = childSnapshot.key()
     var position = childSnapshot.val()
-
+    console.log('child changed', position);
     putPoint(uuid, position)
   })
 
