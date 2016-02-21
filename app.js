@@ -47,7 +47,9 @@ function addPoint(uuid, position) {
       'marker-color': (uuid === myUuid ? '#2196f3' : '#ff9800')
     })
   })
-  marker.addTo(map)
+  marker.bindPopup(position.name).addTo(map)
+  
+  marker.openPopup();
 
   markers[uuid] = marker;
 
@@ -119,6 +121,8 @@ map.on('ready', function() {
 
     removePoint(uuid)
   })
+
+
 });
 
 // Remove old markers
