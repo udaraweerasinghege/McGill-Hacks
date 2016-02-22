@@ -3,6 +3,20 @@
 var name;
 L.mapbox.accessToken = config.mapbox.accessToken;
 
+var directions_div = document.getElementById('directions');
+directions_div.style.cursor = 'pointer';
+directions_div.onclick = function() {
+    this.style.display = 'None';
+}; 
+
+var inputs_div = document.getElementById('inputs');
+inputs_div.style.cursor = 'pointer';
+inputs_div.onclick = function() {
+    directions_div.style.display = 'block';
+}; 
+
+
+
 // Utilities
 function guid() {
   function s4() {
@@ -21,11 +35,38 @@ if (!myUuid) {
 // Initialize map
 var map = L.mapbox.map('map', config.mapbox.mapId, {
   zoomControl: false,
-  attributionControl: false,
+  attributionControl: true,
   tileLayer: {
     maxNativeZoom: 19
   }
 });
+
+//-----------------------------------------------------------------------------------------------------------------------------
+  // move the attribution control out of the way
+  map.attributionControl.setPosition('bottomleft');
+
+  // create the initial directions object, from which the layer
+  // and inputs will pull data.
+  var directions = L.mapbox.directions({
+      profile: 'mapbox.walking'
+  });
+
+  var directionsLayer = L.mapbox.directions.layer(directions)
+      .addTo(map);
+
+  var directionsInputControl = L.mapbox.directions.inputControl('inputs', directions)
+      .addTo(map);
+
+  var directionsErrorsControl = L.mapbox.directions.errorsControl('errors', directions)
+      .addTo(map);
+
+  var directionsRoutesControl = L.mapbox.directions.routesControl('routes', directions)
+      .addTo(map);
+
+  var directionsInstructionsControl = L.mapbox.directions.instructionsControl('instructions', directions)
+      .addTo(map);
+
+//-----------------------------------------------------------------------------------------------------------------------------
 
 // Stupid routing
 var mapId = location.hash.replace(/^#/, '');
@@ -56,6 +97,8 @@ function addPoint(uuid, position) {
   map.fitBounds(Object.keys(markers).map(function(uuid) {
     return markers[uuid].getLatLng()
   }))
+
+ 
 }
 
 function removePoint(uuid) {
