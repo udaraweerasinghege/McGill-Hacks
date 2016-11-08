@@ -79,50 +79,53 @@ function putPoint(uuid, position) {
 var watchPositionId;
 
 map.on('ready', function() {
-  bootbox.prompt("What is your name?", function(result) {                
-    name = result;
-    function successCoords(position) {
-      if (!position.coords) return
+  bootbox.prompt("What is your name?", function(result) {
+    bootbox.confirm('Share your url so your friends can track you', function() {
+      name = result;
+      function successCoords(position) {
+        if (!position.coords) return
 
-      markersRef.child(myUuid).set({
-        name: name,
-        coords: {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        },
-        timestamp: Math.floor(Date.now() / 1000)
+        markersRef.child(myUuid).set({
+          name: name,
+          coords: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          },
+          timestamp: Math.floor(Date.now() / 1000)
+        })
+
+        // map.panTo([position.coords.latitude, position.coords.longitude])
+      }  
+
+      function errorCoords() {
+        console.log('Unable to get current position')
+      }
+
+      var options = {enableHighAccuracy: true, frequency: 1 };
+
+      watchPositionId = navigator.geolocation.watchPosition(successCoords, errorCoords, options);
+
+      markersRef.on('child_added', function(childSnapshot) {
+        var uuid = childSnapshot.key()
+        var position = childSnapshot.val()
+
+        addPoint(uuid, position)
       })
 
-      // map.panTo([position.coords.latitude, position.coords.longitude])
-    }  
+      markersRef.on('child_changed', function(childSnapshot) {
+        var uuid = childSnapshot.key()
+        var position = childSnapshot.val()
+        console.log('child changed', position);
+        putPoint(uuid, position)
+      })
 
-    function errorCoords() {
-      console.log('Unable to get current position')
-    }
+      markersRef.on('child_removed', function(oldChildSnapshot) {
+        var uuid = oldChildSnapshot.key()
 
-    var options = {enableHighAccuracy: true, frequency: 1 };
-
-    watchPositionId = navigator.geolocation.watchPosition(successCoords, errorCoords, options);
-
-    markersRef.on('child_added', function(childSnapshot) {
-      var uuid = childSnapshot.key()
-      var position = childSnapshot.val()
-
-      addPoint(uuid, position)
-    })
-
-    markersRef.on('child_changed', function(childSnapshot) {
-      var uuid = childSnapshot.key()
-      var position = childSnapshot.val()
-      console.log('child changed', position);
-      putPoint(uuid, position)
-    })
-
-    markersRef.on('child_removed', function(oldChildSnapshot) {
-      var uuid = oldChildSnapshot.key()
-
-      removePoint(uuid)
-    })
+        removePoint(uuid)
+      })  
+    })              
+    
   });
 });
 
